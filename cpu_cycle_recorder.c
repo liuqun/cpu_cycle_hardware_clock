@@ -73,7 +73,7 @@ cpu_cycle_recorder_fd_t open_cpu_cycle_recorder(int cpu_id)
 }
 
 /**
- * @brief open_cpu_cycle_recorder
+ * @brief close_cpu_cycle_recorder
  */
 void close_cpu_cycle_recorder(cpu_cycle_recorder_fd_t recorder_fd)
 {
