@@ -23,6 +23,16 @@
 #include "rte_config.h"
 #include "rte_cycle.h"
 //#include "rte_atomic.h"
+//#include "rte_pause.h"
+#ifndef __x86_64__
+#error
+#endif
+#include <emmintrin.h> // Intel X86 memory baraiers
+static inline void rte_pause(void)
+{
+    _mm_pause();
+}
+
 
 #ifndef RTE_LOG
 #include <stdio.h>
@@ -376,7 +386,7 @@ rte_eal_hpet_init(int make_default)
     eal_hpet_resolution_hz = (1000ULL*1000ULL*1000ULL*1000ULL*1000ULL) /
         (uint64_t)eal_hpet_resolution_fs;
 
-    RTE_LOG(INFO, EAL, "HPET frequency is ~%"PRIu64" kHz\n",
+    RTE_LOG(INFO, EAL, "HPET frequency is about %"PRIu64" kHz\n",
             eal_hpet_resolution_hz/1000);
 
     eal_hpet_msb = (eal_hpet->counter_l >> 30);
@@ -470,10 +480,11 @@ void
 rte_delay_us_block(unsigned int us)
 {
     (void) us;
-//	const uint64_t start = rte_get_timer_cycles();
-//	const uint64_t ticks = (uint64_t)us * rte_get_timer_hz() / 1E6;
-//	while ((rte_get_timer_cycles() - start) < ticks)
-//		rte_pause();
+	const uint64_t start = rte_get_timer_cycles();
+	const uint64_t ticks = (uint64_t)us * rte_get_timer_hz() / 1E6;
+    while ((rte_get_timer_cycles() - start) < ticks) {
+		rte_pause();
+    }
 }
 
 void
@@ -528,7 +539,7 @@ set_tsc_freq(void)
     if (!freq)
         freq = estimate_tsc_freq();
 
-    RTE_LOG(DEBUG, EAL, "TSC frequency is ~%" PRIu64 " KHz\n", freq / 1000);
+    RTE_LOG(DEBUG, EAL, "TSC frequency is about %" PRIu64 " KHz\n", freq / 1000);
     eal_tsc_resolution_hz = freq;
 }
 
