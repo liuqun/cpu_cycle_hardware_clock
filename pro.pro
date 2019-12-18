@@ -24,7 +24,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # Input
 SOURCES += \
     cpu_cycle_recorder.c \
-    main.c
+    rte_cycle.c \
+    rte_cycle_test_main.c
 
 HEADERS += \
-    cpu_cycle_recorder.h
+    cpu_cycle_recorder.h \
+    rte_atomic.h \
+    rte_branch_prediction.h \
+    rte_build_config.h \
+    rte_config.h \
+    rte_cycle.h \
+    rte_cycle_copy.h \
+    rte_cycle_x86_64.h \
+    x86/rte_atomic.h \
+    x86/rte_atomic_64.h
+
+unix: LIBS += -lrt
