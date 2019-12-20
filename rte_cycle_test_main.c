@@ -11,6 +11,7 @@ int main(void)
     uint64_t after;
     uint64_t hz_tsc = 0;
     uint64_t hz_hpet = 0;
+    int sum;
 
     printf("===========\n"
            "TSC 时钟测试\n");
@@ -19,7 +20,10 @@ int main(void)
     //usleep(1000*1000);
 
     before = rte_get_tsc_cycles();
-    usleep(1000);
+    sum = 0;
+    for (int delay=1; delay<=500*1000; delay++) {
+        sum += delay;
+    }
     after = rte_get_tsc_cycles();
     delta_tsc = after - before;
     printf("CPU Cycles: delta_tsc = after - before = %llu\n", (unsigned long long) delta_tsc);
@@ -31,7 +35,10 @@ int main(void)
         fprintf(stderr, "Warning: HPET can not be enabled, using TSC as default timer...\n");
     }
     before = rte_get_hpet_cycles();
-    usleep(1000);
+    sum = 0;
+    for (int delay=1; delay<=500*1000; delay++) {
+        sum += delay;
+    }
     after = rte_get_hpet_cycles();
     delta_hpet = after - before;
     printf("CPU Cycles: delta_hpet = after - before = %llu\n", (unsigned long long) delta_hpet);
